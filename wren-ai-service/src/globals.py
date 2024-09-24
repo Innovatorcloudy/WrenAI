@@ -7,6 +7,7 @@ import toml
 from src.core.pipeline import PipelineComponent
 from src.core.provider import EmbedderProvider, LLMProvider
 from src.pipelines.generation import (
+    chart_generation,
     followup_sql_generation,
     sql_answer,
     sql_breakdown,
@@ -21,6 +22,7 @@ from src.pipelines.indexing import indexing
 from src.pipelines.retrieval import historical_question, retrieval
 from src.web.v1.services.ask import AskService
 from src.web.v1.services.ask_details import AskDetailsService
+from src.web.v1.services.chart import ChartService
 from src.web.v1.services.semantics_preparation import SemanticsPreparationService
 from src.web.v1.services.sql_answer import SqlAnswerService
 from src.web.v1.services.sql_expansion import SqlExpansionService
@@ -34,6 +36,7 @@ logger = logging.getLogger("wren-ai-service")
 class ServiceContainer:
     semantics_preparation_service: SemanticsPreparationService
     ask_service: AskService
+    chart_service: ChartService
     sql_answer_service: SqlAnswerService
     sql_expansion_service: SqlExpansionService
     ask_details_service: AskDetailsService
@@ -85,6 +88,14 @@ def create_service_container(
                 ),
                 "sql_summary": sql_summary.SQLSummary(
                     **pipe_components["sql_summary"],
+                ),
+            },
+            **query_cache,
+        ),
+        chart_service=ChartService(
+            pipelines={
+                "chart_generation": chart_generation.ChartGeneration(
+                    llm_provider=llm_provider,
                 ),
             },
             **query_cache,

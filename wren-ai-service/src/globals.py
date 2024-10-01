@@ -95,7 +95,7 @@ def create_service_container(
         chart_service=ChartService(
             pipelines={
                 "chart_generation": chart_generation.ChartGeneration(
-                    llm_provider=llm_provider,
+                    **pipe_components["chart_generation"],
                 ),
             },
             **query_cache,
